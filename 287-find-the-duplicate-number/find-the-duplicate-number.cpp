@@ -1,17 +1,20 @@
 class Solution {
 public:
     int findDuplicate(vector<int>& nums) {
-        sort(nums.begin(),nums.end());
-        int xr,ans;
-        for(int i=0;i<nums.size()-1;i++)
+        int slow = 0;
+        int fast = 0;
+        do
         {
-            xr=nums[i]^nums[i+1];//xor of two duplicate numbers is 0
-            if(xr==0)
-            {
-                ans=nums[i];
-                break;
-            }
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        }while(slow != fast);
+        // in this place they have met so now slow will point oward oth index and traverse along long ,and where tehy meet that is duplicate
+        slow =0;
+        while(slow != fast)
+        {
+            slow = nums[slow];
+            fast = nums[fast];
         }
-        return ans;
+        return slow;
     }
 };
