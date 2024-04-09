@@ -1,24 +1,21 @@
 class Solution {
 public:
-    int lengthOfLIS(vector<int>&a) {
-    int n1 = a.size();
-    const int INF = 1e9;
-    vector<int> d(n1+1, INF);
-    d[0] = -INF;
-    
-    for (int i = 0; i < n1; i++) {
-        int j = upper_bound(d.begin(), d.end(), a[i]) - d.begin();
-        if (d[j-1] < a[i] && a[i] < d[j])
-            d[j] = a[i];
-    }
-    
-    int ans = 0;
-    
-    for (int i = 0; i <= n1; i++) {
-        if (d[i] < INF)
-            ans = i;
-    }
-    
-    return ans;
+    int lengthOfLIS(std::vector<int>& nums) {
+        if (nums.empty()) {
+            return 0;
+        }
+
+        int n = nums.size();
+        vector<int> dp(n, 1);
+
+        for (int i = 1; i < n; ++i) {
+            for (int j = 0; j < i; ++j) {
+                if (nums[i] > nums[j]) {
+                    dp[i] = max(dp[i], dp[j] + 1);
+                }
+            }
+        }
+
+        return *max_element(dp.begin(), dp.end());
     }
 };
