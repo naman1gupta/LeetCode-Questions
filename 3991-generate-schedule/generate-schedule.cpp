@@ -1,59 +1,42 @@
 class Solution {
 public:
     vector<vector<int>> generateSchedule(int n) {
-        if (n <= 4)
-            return {};
+        if (n < 5) return {};
 
-        int total_matches = n * (n - 1);
-
-        unordered_set<int> teams;
-        vector<int> gamesPlayed(n, 0);
-        vector<vector<bool>> matches(n,vector<bool>(n,false));
-
-        int lastPlayedTeam1 = -1 , lastPlayedTeam2 = -1;
-
-        for(int i=0 ; i<n ;  i++){
-            teams.insert(i);
-        }
+        set<pair<int, int>> played;
+        vector<int> gamesCount(n, 0);
 
         vector<vector<int>> schedule;
 
-        for(int day = 0 ; day < total_matches ; day++){
+        int prevA = -1, prevB = -2;
+        for (int game = 0; game < n * (n - 1); ++game) {
+            int minSum = 4 * n;
+            int A = -1, B = -2;
 
-            unordered_set<int> available;
-            for(int team : teams){
-                if(team != lastPlayedTeam1 && team != lastPlayedTeam2){
-                    available.insert(team);
-                }
-            }
+            for (int i = 0; i < n; ++i) {
+                if (i == prevA || i == prevB) continue;
 
-            int miniScore = INT_MAX;
-            int Firstteam = -1;
-            int Secondteam = -1;
+                for (int j = 0; j < n; ++j) {
+                    if (j == i || j == prevA || j == prevB) continue;
+                    if (played.find({i, j}) != played.end()) continue;
 
-            for(int team1 : available){
-                for(int team2 : available){
-                    if(team1 == team2) continue;
-                    if(matches[team1][team2]) continue;
-
-                    int score = gamesPlayed[team1] + gamesPlayed[team2];
-                    if(score < miniScore){
-                        miniScore = score;
-                        Firstteam = team1;
-                        Secondteam = team2;
+                    if (gamesCount[i] + gamesCount[j] < minSum) {
+                        A = i;
+                        B = j;
+                        minSum = gamesCount[i] + gamesCount[j];
                     }
                 }
             }
 
-            if(Firstteam == -1 || Secondteam == -1) return {};
+            schedule.push_back({A, B});
 
-            schedule.push_back({Firstteam , Secondteam});
-            matches[Firstteam][Secondteam] = true;
-            lastPlayedTeam1 = Firstteam;
-            lastPlayedTeam2 = Secondteam;
-            gamesPlayed[Firstteam]++;
-            gamesPlayed[Secondteam]++;
+            played.insert({A, B});
+            gamesCount[A]++;
+            gamesCount[B]++;
+            prevA = A;
+            prevB = B;
         }
+
         return schedule;
     }
 };
